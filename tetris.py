@@ -38,15 +38,15 @@ class Shape():
 		self.isNew = True
 
 	def canMoveRight(self, grid):
-		for i in len(self.piece[0]): 
-			if grid[(self.x + self.piece.length()) + 1][self.y + i] != 0:
+		for i in range(len(self.piece[0])): 
+			if grid[(self.x + len(self.piece)) + 1][self.y + i] != 0:
 				self.x += 1
 				return True
 			else: 
 				return False
 
 	def canMoveLeft(self, grid): 
-		for i in len(self.piece[0]): 
+		for i in range(len(self.piece[0])): 
 			if grid[self.x - 1][self.y + i] != 0:
 				self.x -= 1
 				return True
@@ -55,12 +55,15 @@ class Shape():
 
 	def canMoveDown(self, grid): 
 		for i in range(len(self.piece)): 
-			if (self.x + i) >= GRID_WIDTH or (self.y + len(self.piece[0])) >= GRID_HEIGHT:
+			if (self.x + i) > GRID_WIDTH or (self.y + len(self.piece[0]) + 1) > GRID_HEIGHT:
 				self.endPiece()
 				return False
-			elif grid[(self.x + i)][self.y + len(self.piece[0])] != 0:
-				self.endPiece()
-				return False
+			# allow for crooked falling
+			if grid[self.x + i][self.y + len(self.piece[0])] != 0:
+				# if y + 1 is not block then end piece
+				if grid[self.x + i][self.y + len(self.piece[0]) + 1] != 0:
+					self.endPiece()
+					return False
 
 		self.y += 1	
 		self.isNew = False
@@ -104,10 +107,10 @@ class Shape():
 	def endPiece(self): 
 		for i in range(len(self.piece)):
 			for j in range(len(self.piece[0])): 
-				if (isinstance(self.piece[i][j], str)):
-					self.piece[i][j] == self.piece[i][j].lower()
+				if isinstance(self.piece[i][j], str):
+					self.piece[i][j] = self.piece[i][j].lower()
 
-		self.incDeadNum()
+		#self.incDeadNum()
 		# return true so that pointer can now point to new piece
 		return True
 
@@ -154,7 +157,7 @@ def randomPiece() -> Shape:
 
 	return shapes[randomIndex]
 
-def drawGrid(grid: list[list], screen, cell_size): 
+def drawGrid(grid: list[list], screen, cell_size)-> None: 
 	for i in range(GRID_WIDTH):
 		for j in range(GRID_HEIGHT):
 			color = colors[grid[i][j]] 
@@ -175,12 +178,14 @@ def updateGrid(grid: list[list], shape: Shape):
 
 	return grid
 
-def userInput(grid: list[list], piece: Shape, event): 
+def userInput(grid: list[list], piece: Shape, event)-> None: 
 	if event.type == pygame.KEYDOWN:	
 		if event.key == pygame.K_LEFT:
 			piece.canMoveLeft(grid)
+			updateGrid(grid, piece)
 		elif event.key == pygame.K_RIGHT:
 			piece.canMoveRight(grid)
+			updateGrid(grid, piece)
 		elif event.key == pygame.K_DOWN:
 			pass
 		elif event.key == pygame.K_SPACE:
@@ -212,10 +217,11 @@ def main():
 		drawGrid(grid, screen, CELL_SIZE)
 
 		# if cant move down init new random piece and change pointer to new random piece
-		if (currentPiece.canMoveDown(grid) == False): 
+		if (currentPiece.canMoveDown(grid) == False):
 			currentPiece = randomPiece()
 		#else currentPiece.canMoveDown(grid):
 			
+		print(grid)
 	
 
 		pygame.display.flip()
