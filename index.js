@@ -1,19 +1,19 @@
 const Tshape = [
-    [0, 1, 0],
-    [1, 1, 1],
+    [0, R, 0],
+    [R, R, R],
 ];
 
 const Lshape = [
-    [1, 0],
-    [1, 0],
-    [1, 1],
+    [B, 0],
+    [B, 0],
+    [B, B],
 ];
 
-const Ishape = [[1], [1], [1]];
+const Ishape = [[G], [G], [G]];
 
 const SquareShape = [
-    [1, 1],
-    [1, 1],
+    [Y, Y],
+    [Y, Y],
 ];
 
 function initGrid(rows, cols) {
@@ -52,7 +52,7 @@ function rotatePieceRight(piece) {
         }
     }
 
-    return newArray;
+    return new;
 }
 
 function createNewPiece(grid) {
@@ -61,7 +61,7 @@ function createNewPiece(grid) {
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece[0].length; j++) {
             // end game if grid section is already 0
-            if (grid[i + xpos][j] === 1) {
+            if (grid[i + xpos][j] !== 0) {
                 return false;
             }
 
@@ -71,12 +71,49 @@ function createNewPiece(grid) {
     return grid;
 }
 
-function main() {
-    let grid = initGrid(15, 10);
+// turn letters lower cased when placed
+function piecePlaced() {}
 
-    grid = createNewPiece(grid);
+function fallOneBlock() {}
+
+function movePiece() {}
+
+function isTetris() {}
+
+function tetris() {}
+
+let grid = initGrid(15, 10);
+const canvas = document.getElementsByClassName("tetris-board");
+const context = canvas.getContext("2d");
+
+const scoreElement = document.getElementById("scoreboard");
+const score = 0;
+
+function main() {
+    do {
+        if (piecePlaced()) {
+            if (isTetris()) {
+                tetris();
+            }
+            grid = createNewPiece(grid);
+            scoreElement.textContent = "score: $(score)";
+        }
+        fallOneBlock();
+    } while (!grid);
+
+    // exit loop
+    return false;
 }
 
-piece = randomPiece();
-console.log(piece);
-console.log(rotatePieceRight(piece));
+// loop
+const interval = setInterval(function () {
+    if (!main()) {
+        clearInterval(interval);
+    }
+}, 100);
+
+function testing() {
+    piece = randomPiece();
+    console.log(piece);
+    console.log(rotatePieceRight(piece));
+}
